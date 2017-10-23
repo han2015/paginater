@@ -32,19 +32,27 @@ func main() {
 `demo.html`
 
 ```html
-{{if not .Page.IsFirst}}[First](1){{end}}
-{{if .Page.HasPrevious}}[Previous]({{.Page.Previous}}){{end}}
-
-{{range .Page.Pages}}
-	{{if eq .Num -1}}
-	...
-	{{else}}
-	{{.Num}}{{if .IsCurrent}}(current){{end}}
-	{{end}}
-{{end}}
-
-{{if .Page.HasNext}}[Next]({{.Page.Next}}){{end}}
-{{if not .Page.IsLast}}[Last]({{.Page.TotalPages}}){{end}}
+{{if gt .Page.TotalPages 1}}
+    <div class="pagination">
+        <div class="page-container clearfix">
+            {{$prefix:=.PageListURL}}
+            {{if .Page.HasPrevious}}<div class="page-link-prev fl"><a href='{{printf "%s%v" $prefix .Page.Previous}}'></a></div>{{end}}
+            <div class="page-links fl">
+            {{range .Page.Pages}}
+                {{if le .Num 0}}
+                {{else}}
+                    {{if .IsCurrent}}
+                        <strong>{{.Num}}</strong>
+                    {{else}}
+                        <a href='{{printf "%s%v" $prefix .Num}}'>{{.Num}}</a>
+                    {{end}}
+                {{end}}
+            {{end}}
+            </div>
+            {{if .Page.HasNext}}<div class="page-link-next fl"><a href='{{printf "%s%v" $prefix .Page.Next}}'></a></div>{{end}}
+        </div>
+    </div>
+    {{end}}
 ```
 
 Possible output:
